@@ -33,3 +33,18 @@ TEST(shared_ptr, swap) {
     ASSERT_EQ(*sp2, 100);
     ASSERT_EQ(*sp1, 50);
 }
+TEST(shared_ptr, CheckIsMoveConstructible) {
+    ASSERT_EQ(std::is_move_constructible<int &>::value, true);
+    EXPECT_TRUE(std::is_move_constructible<shared_ptr<int>>());
+    EXPECT_TRUE(std::is_move_constructible<shared_ptr<char>>());
+    EXPECT_TRUE(std::is_move_constructible<shared_ptr<size_t>>());
+    EXPECT_TRUE(std::is_move_constructible<shared_ptr<std::string>>());
+    EXPECT_TRUE(std::is_move_constructible<shared_ptr<uint16_t>>());
+}
+TEST(shared_ptr, CheckIsMoveAssignable) {
+    EXPECT_TRUE(std::is_move_assignable<shared_ptr<int>>());
+    EXPECT_TRUE(std::is_move_assignable<shared_ptr<char>>());
+    EXPECT_TRUE(std::is_move_assignable<shared_ptr<std::string>>());
+    EXPECT_TRUE(std::is_move_assignable<shared_ptr<size_t>>());
+    EXPECT_TRUE(std::is_move_assignable<shared_ptr<uint16_t>>());
+}
