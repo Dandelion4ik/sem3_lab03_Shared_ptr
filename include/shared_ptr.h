@@ -22,7 +22,7 @@ class shared_ptr {
   auto operator*() const -> T &;
   auto operator->() const -> T *;
   auto get() -> T *;
-  auto get_counter() const -> const std::atomic_uint *;
+  [[nodiscard]] auto get_counter() const -> const std::atomic_uint *;
   void reset();
   void reset(T *ptr);
   void swap(shared_ptr &r);
