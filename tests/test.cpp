@@ -2,76 +2,34 @@
 #include <gtest/gtest.h>
 
 #include "shared_ptr.h"
+
 TEST(shared_ptr, initialisation) {
-    shared_ptr<int> sp1;
-    EXPECT_EQ(sp1, false);
-
-    shared_ptr<int> sp2(new int(567));
-
-    EXPECT_EQ(sp2, true);
-    EXPECT_EQ(*sp2, 567);
-    EXPECT_EQ(sp2.use_count(), 1);
-
-    shared_ptr<int> sp3(sp2);
-
-    EXPECT_EQ(sp3, true);
-    EXPECT_EQ(*sp2, *sp3);
-    EXPECT_EQ(sp2.use_count(), 2);
-    EXPECT_EQ(sp3.use_count(), 2);
-    EXPECT_EQ(sp2.get(), sp3.get());
+    shared_ptr<int> sp1(new int{100});
+    shared_ptr<int> sp2(sp1);
+    ASSERT_EQ(sp1.operator bool(), true);
+    ASSERT_EQ(sp2.operator bool(), true);
+    ASSERT_EQ(sp1.get(), sp2.get());
+    ASSERT_EQ(sp1.use_count(), 2);
+    int a = 100;
+    shared_ptr<int> SH_TEST(new int{a});
+    ASSERT_EQ(SH_TEST.use_count(), 1);
+    ASSERT_EQ(*SH_TEST, a);
 }
-
-TEST(shared_ptr, assign) {
-    shared_ptr<int> sp1(new int(2898));
-    auto sp2 = sp1;
-
-    EXPECT_EQ(*sp2, 2898);
-    EXPECT_EQ(sp1.use_count(), 2);
-    EXPECT_EQ(sp1.use_count(), sp2.use_count());
-
-    shared_ptr<int> sp3(new int(0));
-
-    EXPECT_EQ(sp3.use_count(), 1);
-
-    sp1 = sp3;
-
-    EXPECT_EQ(sp3.use_count(), 2);
-    EXPECT_EQ(*sp1, 0);
+TEST(shared_ptr, move) {
+    shared_ptr<int> SP1(new int{100});
+    shared_ptr<int> SP2(std::move(SP1));
+    ASSERT_EQ(SP2.use_count(), 1);
 }
-
-TEST(shared_ptr, reset_swap) {
-    shared_ptr<int> sp1(new int(2));
-
-    EXPECT_EQ(sp1.use_count(), 1);
-
-    sp1.reset();
-
-    EXPECT_EQ(sp1, false);
-
-    shared_ptr<int> sp2(new int(2));
-    sp1 = sp2;
-
-    EXPECT_EQ(sp2.use_count(), 2);
-    EXPECT_EQ(*sp2, 2);
-
-    sp2.reset(new int(2001));
-
-    EXPECT_EQ(sp2.use_count(), 1);
-    EXPECT_EQ(*sp2, 2001);
-    EXPECT_EQ(sp1.use_count(), 1);
-    EXPECT_EQ(*sp1, 2);
-
-    shared_ptr<int> sp3(sp2);
-
-    EXPECT_EQ(sp3.use_count(), 2);
-    EXPECT_EQ(*sp3, 2001);
-    EXPECT_EQ(sp1.use_count(), 1);
-    EXPECT_EQ(*sp1, 2);
-
-    sp3.swap(sp1);
-
-    EXPECT_EQ(sp3.use_count(), 1);
-    EXPECT_EQ(*sp3, 2);
-    EXPECT_EQ(sp1.use_count(), 2);
-    EXPECT_EQ(*sp1, 2001);
+TEST(shared_ptr, reset) {
+    shared_ptr<std::string> s1(new std::string{"hello"});
+    auto *s2 = new std::string("world");
+    s1.reset(s2);
+    ASSERT_EQ(*s1, "world");
+}
+TEST(shared_ptr, swap) {
+    shared_ptr<int> sp1(new int{100});
+    shared_ptr<int> sp2(new int{50});
+    sp2.swap(sp1);
+    ASSERT_EQ(*sp2, 100);
+    ASSERT_EQ(*sp1, 50);
 }
