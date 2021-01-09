@@ -2,62 +2,76 @@
 #include <gtest/gtest.h>
 
 #include "shared_ptr.h"
+TEST(shared_ptr, initialisation) {
+    shared_ptr<int> sp1;
+    EXPECT_EQ(sp1, false);
 
-TEST(shared_ptr, ContructorDefaultTest) {
-  shared_ptr<int> SP1(new int{0});
-  shared_ptr<int> SP2(SP1);
-  ASSERT_EQ(SP1.operator bool(), true);
-  ASSERT_EQ(SP2.operator bool(), true);
-  ASSERT_EQ(SP1.get(), SP2.get());
-  ASSERT_EQ(SP1.use_count(), 2);
+    shared_ptr<int> sp2(new int(567));
+
+    EXPECT_EQ(sp2, true);
+    EXPECT_EQ(*sp2, 567);
+    EXPECT_EQ(sp2.use_count(), 1);
+
+    shared_ptr<int> sp3(sp2);
+
+    EXPECT_EQ(sp3, true);
+    EXPECT_EQ(*sp2, *sp3);
+    EXPECT_EQ(sp2.use_count(), 2);
+    EXPECT_EQ(sp3.use_count(), 2);
+    EXPECT_EQ(sp2.get(), sp3.get());
 }
-TEST(shared_ptr, TestMainOperators) {
-  int b = 50;
-  shared_ptr<int> SH_TEST(new int{b});
-  ASSERT_EQ(SH_TEST.use_count(), 1);
-  ASSERT_EQ(*SH_TEST, b);
+
+TEST(shared_ptr, assign) {
+    shared_ptr<int> sp1(new int(2898));
+    auto sp2 = sp1;
+
+    EXPECT_EQ(*sp2, 2898);
+    EXPECT_EQ(sp1.use_count(), 2);
+    EXPECT_EQ(sp1.use_count(), sp2.use_count());
+
+    shared_ptr<int> sp3(new int(0));
+
+    EXPECT_EQ(sp3.use_count(), 1);
+
+    sp1 = sp3;
+
+    EXPECT_EQ(sp3.use_count(), 2);
+    EXPECT_EQ(*sp1, 0);
 }
-TEST(shared_ptr, RvalueOperatorTest) {
-  shared_ptr<int> SP1(new int{10});
-  shared_ptr<int> SP2(std::move(SP1));
-  ASSERT_EQ(SP2.use_count(), 1);
-}
-TEST(shared_ptr, ResetTest) {
-  shared_ptr<std::string> s1(new std::string{"hello"});
-  std::string *s2 = new std::string("world");
-  s1.reset(s2);
-  ASSERT_EQ(*s1, "world");
-}
-TEST(shared_ptr, SwapTest) {
-  shared_ptr<int> SP1(new int{10});
-  shared_ptr<int> SP2(new int{20});
-  SP2.swap(SP1);
-  ASSERT_EQ(*SP2, 10);
-  ASSERT_EQ(*SP1, 20);
-  shared_ptr<char> ch1(new char{'a'});
-  shared_ptr<char> ch2(new char{'b'});
-  ASSERT_EQ(ch1.use_count(), 1);
-  ASSERT_EQ(ch2.use_count(), 1);
-  ASSERT_EQ(*ch1, 'a');
-  ASSERT_EQ(*ch2, 'b');
-  ch1.swap(ch2);
-  ASSERT_EQ(ch1.use_count(), 1);
-  ASSERT_EQ(ch2.use_count(), 1);
-  ASSERT_EQ(*ch1, 'b');
-  ASSERT_EQ(*ch2, 'a');
-}
-TEST(shared_ptr, CheckIsMoveConstructible) {
-  ASSERT_EQ(std::is_move_constructible<int &>::value, true);
-  EXPECT_TRUE(std::is_move_constructible<shared_ptr<int>>());
-  EXPECT_TRUE(std::is_move_constructible<shared_ptr<char>>());
-  EXPECT_TRUE(std::is_move_constructible<shared_ptr<size_t>>());
-  EXPECT_TRUE(std::is_move_constructible<shared_ptr<std::string>>());
-  EXPECT_TRUE(std::is_move_constructible<shared_ptr<uint16_t>>());
-}
-TEST(shared_ptr, CheckIsMoveAssignable) {
-  EXPECT_TRUE(std::is_move_assignable<shared_ptr<int>>());
-  EXPECT_TRUE(std::is_move_assignable<shared_ptr<char>>());
-  EXPECT_TRUE(std::is_move_assignable<shared_ptr<std::string>>());
-  EXPECT_TRUE(std::is_move_assignable<shared_ptr<size_t>>());
-  EXPECT_TRUE(std::is_move_assignable<shared_ptr<uint16_t>>());
+
+TEST(shared_ptr, reset_swap) {
+    shared_ptr<int> sp1(new int(2));
+
+    EXPECT_EQ(sp1.use_count(), 1);
+
+    sp1.reset();
+
+    EXPECT_EQ(sp1, false);
+
+    shared_ptr<int> sp2(new int(2));
+    sp1 = sp2;
+
+    EXPECT_EQ(sp2.use_count(), 2);
+    EXPECT_EQ(*sp2, 2);
+
+    sp2.reset(new int(2001));
+
+    EXPECT_EQ(sp2.use_count(), 1);
+    EXPECT_EQ(*sp2, 2001);
+    EXPECT_EQ(sp1.use_count(), 1);
+    EXPECT_EQ(*sp1, 2);
+
+    shared_ptr<int> sp3(sp2);
+
+    EXPECT_EQ(sp3.use_count(), 2);
+    EXPECT_EQ(*sp3, 2001);
+    EXPECT_EQ(sp1.use_count(), 1);
+    EXPECT_EQ(*sp1, 2);
+
+    sp3.swap(sp1);
+
+    EXPECT_EQ(sp3.use_count(), 1);
+    EXPECT_EQ(*sp3, 2);
+    EXPECT_EQ(sp1.use_count(), 2);
+    EXPECT_EQ(*sp1, 2001);
 }
