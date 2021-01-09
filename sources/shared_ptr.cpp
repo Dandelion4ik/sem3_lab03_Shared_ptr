@@ -22,7 +22,6 @@ shared_ptr<T>::shared_ptr(shared_ptr &&r) noexcept : counter{nullptr} {
 }
 template <typename T>
 shared_ptr<T>::~shared_ptr() {
-  if (!counter) return;
   if (--(*counter) == 0) {
     delete pointer;
     delete counter;
