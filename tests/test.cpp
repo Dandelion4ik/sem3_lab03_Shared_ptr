@@ -1,6 +1,5 @@
 // Copyright 2021 Kavykin Andrey Kaviandr@yandex.ru
 #include <gtest/gtest.h>
-
 #include "shared_ptr.h"
 
 TEST(shared_ptr, initialisation) {
@@ -16,9 +15,9 @@ TEST(shared_ptr, initialisation) {
     ASSERT_EQ(*SH_TEST, a);
 }
 TEST(shared_ptr, move) {
-    shared_ptr<int> SP1(new int{100});
-    shared_ptr<int> SP2(std::move(SP1));
-    ASSERT_EQ(SP2.use_count(), 1);
+    shared_ptr<int> sp1(new int{100});
+    shared_ptr<int> sp2(std::move(sp1));
+    ASSERT_EQ(sp2.use_count(), 1);
 }
 TEST(shared_ptr, reset) {
     shared_ptr<std::string> s1(new std::string{"hello"});
