@@ -96,10 +96,10 @@ template <typename T>
 auto shared_ptr<T>::get() -> T * {
     return pointer;
 }
-template <typename T>
+/*template <typename T>
 void shared_ptr<T>::reset() {
     *this = std::move(shared_ptr());
-}
+}*/
 template <typename T>
 void shared_ptr<T>::reset(T *ptr) {
     *this = std::move(shared_ptr<T>(ptr));
