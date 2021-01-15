@@ -42,8 +42,8 @@ shared_ptr<T>::shared_ptr(const shared_ptr &r) : counter{nullptr} {
 }
 template <typename T>
 shared_ptr<T>::shared_ptr(shared_ptr &&r) noexcept : counter{nullptr} {
-    pointer = r.pointer;
-    counter = r.counter;
+    std::swap(pointer,r.pointer);
+    std::swap(counter,r.counter);
     r.pointer = nullptr;
     r.counter = nullptr;
 }
